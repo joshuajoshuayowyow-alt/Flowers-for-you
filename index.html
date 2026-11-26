@@ -1,0 +1,422 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Happy Monthsarry Jagiya ❤️</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #16080d;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    color: white;
+}
+
+h2 {
+    position: absolute;
+    top: 18px;
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: #d6a9b9;
+    z-index: 2;
+}
+
+.love-message {
+    position: absolute;
+    top: 55px;
+    width: 100%;
+    text-align: center;
+    color: #ff75a0;
+    font-size: 25px;
+    font-weight: bold;
+    text-shadow: 0 0 10px #ff1744, 0 0 25px #ff1744;
+    animation: heartbeat 2s infinite;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.subtitle {
+    position: absolute;
+    top: 120px;
+    width: 100%;
+    text-align: center;
+    color: #ffc1d6;
+    font-size: 13px;
+    letter-spacing: 2px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+@keyframes heartbeat {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.08);
+    }
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100vh;
+    cursor: crosshair;
+}
+
+.footer {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    color: #d6a9b9;
+    font-size: 12px;
+    letter-spacing: 2px;
+    pointer-events: none;
+}
+
+@media (max-width: 600px) {
+    .love-message {
+        font-size: 20px;
+    }
+
+    .subtitle {
+        font-size: 10px;
+    }
+
+    h2 {
+        font-size: 9px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<h2>✿ CLICK ANYWHERE TO PLANT A FLOWER ✿</h2>
+
+<div class="love-message">
+    Happy Monthsarry Jagiya! ❤️
+    <br>
+    I Love You! 🌹
+</div>
+
+<div class="subtitle">
+    YOU ARE MY FAVORITE FLOWER IN THE GARDEN 💗
+</div>
+
+<canvas id="garden"></canvas>
+
+<div class="footer">
+    EVERY FLOWER BLOOMS IN ITS OWN TIME 🌸
+</div>
+
+<script>
+
+const canvas = document.getElementById("garden");
+const ctx = canvas.getContext("2d");
+
+let flowers = [];
+let stars = [];
+
+const colors = [
+    "#ff1744",
+    "#ff75a0",
+    "#ffe23b",
+    "#ffffff",
+    "#ff4d91",
+    "#ff9f43",
+    "#c77dff"
+];
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    createStars();
+
+    if (flowers.length === 0) {
+        plantInitialFlowers();
+    }
+}
+
+window.addEventListener("resize", resize);
+
+function createStars() {
+    stars = [];
+
+    for (let i = 0; i < 120; i++) {
+        stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 2,
+            alpha: Math.random()
+        });
+    }
+}
+
+function drawStars() {
+    stars.forEach(star => {
+
+        star.alpha += (Math.random() - 0.5) * 0.04;
+
+        star.alpha = Math.max(
+            0.1,
+            Math.min(1, star.alpha)
+        );
+
+        ctx.beginPath();
+
+        ctx.arc(
+            star.x,
+            star.y,
+            star.size,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle = `rgba(255,255,255,${star.alpha})`;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = "white";
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+    });
+}
+
+class Flower {
+
+    constructor(x, y) {
+
+        this.x = x;
+        this.y = y;
+
+        this.color = colors[
+            Math.floor(Math.random() * colors.length)
+        ];
+
+        this.height = 90 + Math.random() * 120;
+        this.growth = 0;
+
+        this.size = 10 + Math.random() * 8;
+        this.sway = Math.random() * 5;
+        this.phase = Math.random() * 6;
+
+        this.petals = 7 + Math.floor(Math.random() * 5);
+    }
+
+    draw() {
+
+        this.growth = Math.min(
+            this.growth + 0.008,
+            1
+        );
+
+        let progress = this.growth;
+
+        let stemHeight = this.height * progress;
+
+        let topX = this.x + Math.sin(this.phase) * this.sway;
+        let topY = this.y - stemHeight;
+
+        ctx.save();
+
+        // Draw stem
+        ctx.beginPath();
+
+        ctx.moveTo(this.x, this.y);
+
+        ctx.quadraticCurveTo(
+            this.x - 10,
+            this.y - stemHeight / 2,
+            topX,
+            topY
+        );
+
+        ctx.strokeStyle = "#4caa65";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw leaves
+        for (let i = 1; i <= 3; i++) {
+
+            let leafProgress = i / 4;
+
+            let leafY = this.y - stemHeight * leafProgress;
+
+            let leafX = this.x + (topX - this.x) * leafProgress;
+
+            ctx.fillStyle = "#42c76b";
+
+            ctx.beginPath();
+
+            ctx.ellipse(
+                leafX + (i % 2 ? 12 : -12),
+                leafY,
+                12,
+                4,
+                i % 2 ? -0.5 : 0.5,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+        }
+
+        // Bloom flower
+        if (progress > 0.6) {
+
+            let bloom = Math.min(
+                (progress - 0.6) * 2.5,
+                1
+            );
+
+            ctx.translate(topX, topY);
+            ctx.scale(bloom, bloom);
+
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = this.color;
+
+            // Flower petals
+            for (let i = 0; i < this.petals; i++) {
+
+                let angle =
+                    (Math.PI * 2 / this.petals) * i;
+
+                ctx.save();
+
+                ctx.rotate(angle);
+
+                ctx.beginPath();
+
+                ctx.ellipse(
+                    0,
+                    -this.size * 0.65,
+                    this.size * 0.45,
+                    this.size,
+                    0,
+                    0,
+                    Math.PI * 2
+                );
+
+                ctx.fillStyle = this.color;
+                ctx.fill();
+
+                ctx.restore();
+            }
+
+            // Flower center
+            ctx.beginPath();
+
+            ctx.arc(
+                0,
+                0,
+                this.size * 0.4,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fillStyle = "#6b3900";
+            ctx.fill();
+
+            ctx.beginPath();
+
+            ctx.arc(
+                -2,
+                -2,
+                this.size * 0.15,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fillStyle = "#ffe66d";
+            ctx.fill();
+        }
+
+        ctx.restore();
+    }
+}
+
+// Create the first flowers
+function plantInitialFlowers() {
+
+    const center = canvas.width / 2;
+    const ground = canvas.height * 0.85;
+
+    const positions = [
+        [-140, 190],
+        [-90, 150],
+        [-45, 220],
+        [0, 180],
+        [45, 230],
+        [90, 160],
+        [140, 200]
+    ];
+
+    positions.forEach(pos => {
+
+        flowers.push(
+            new Flower(
+                center + pos[0],
+                ground
+            )
+        );
+
+    });
+}
+
+// Animation loop
+function animate() {
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    drawStars();
+
+    flowers.forEach(flower => {
+
+        flower.phase += 0.003;
+
+        flower.draw();
+
+    });
+
+    requestAnimationFrame(animate);
+}
+
+// Click to plant flowers
+canvas.addEventListener("click", function(event) {
+
+    const rect = canvas.getBoundingClientRect();
+
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    flowers.push(
+        new Flower(x, y)
+    );
+
+});
+
+// Start animation
+resize();
+animate();
+
+</script>
+
+</body>
+</html>
